@@ -9,7 +9,7 @@ use procfs::{
     process::{all_processes, LimitValue, Process},
     ProcResult,
 };
-use ratatui::text::{Line, Span};
+use ratatui::text::Line;
 
 #[derive(Debug)]
 pub struct ProcessTreeEntry {
@@ -157,9 +157,10 @@ where
 }
 
 /// Given some text, and a width, try to figure out how many lines it needs
+#[cfg(test)]
 pub(crate) fn get_numlines<'t, I>(i: I, width: usize) -> usize
 where
-    I: Iterator<Item = &'t Span<'t>>,
+    I: Iterator<Item = &'t ratatui::text::Span<'t>>,
 {
     let mut cur_line_length = 0;
     let mut num_lines = 1;
