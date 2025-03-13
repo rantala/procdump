@@ -44,13 +44,26 @@ impl AppWidget for MemWidget {
                 let keys = [
                     "Rss",
                     "Pss",
+                    "Pss_Dirty",
+                    "Pss_Anon",
+                    "Pss_File",
+                    "Pss_Shmem",
                     "Shared_Clean",
                     "Shared_Dirty",
                     "Private_Clean",
                     "Private_Dirty",
                     "Referenced",
                     "Anonymous",
+                    "KSM",
+                    "LazyFree",
+                    "AnonHugePages",
+                    "ShmemPmdMapped",
+                    "FilePmdMapped",
+                    "Shared_Hugetlb",
+                    "Private_Hugetlb",
                     "Swap",
+                    "SwapPss",
+                    "Locked",
                 ];
                 let key_style = Style::default().fg(Color::Green);
                 let data = &rollup.memory_map_rollup.0[0].extension.map;
