@@ -98,7 +98,7 @@ impl AppWidget for MapsWidget {
                         | p @ MMapPath::Vvar
                         | p @ MMapPath::Vsyscall
                         | p @ MMapPath::Anonymous => {
-                            line.push(Span::styled(format!("{p:?}\n"), Style::default().fg(Color::Green)))
+                            line.push(Span::styled(format!("[{p:?}]\n"), Style::default().fg(Color::Green)))
                         }
                         p => line.push(Span::raw(format!("{p:?}"))),
                     }
@@ -148,7 +148,7 @@ impl AppWidget for MapsWidget {
                         | p @ MMapPath::Vvar
                         | p @ MMapPath::Vsyscall
                         | p @ MMapPath::Anonymous => {
-                            line.push(Span::styled(format!("{p:?}\n"), Style::default().fg(Color::Green)))
+                            line.push(Span::styled(format!("[{p:?}]\n"), Style::default().fg(Color::Green)))
                         }
                         p => line.push(Span::raw(format!("{p:?}"))),
                     }
