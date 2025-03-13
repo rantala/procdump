@@ -74,6 +74,13 @@ impl AppWidget for MapsWidget {
 
         match &self.maps {
             Maps::Maps(Ok(maps)) => {
+                let header_style = Style::default().fg(Color::Magenta);
+                text.push(Line::from(vec![
+                    Span::styled(format!("{:29} ", "Address"), header_style),
+                    Span::styled("Flag ", header_style),
+                    Span::styled("Offset     ", header_style),
+                    Span::styled("Path       ", header_style),
+                ]));
                 for map in &maps.0 {
                     let mut line = vec![
                         Span::raw(format!("0x{:012x}-0x{:012x} ", map.address.0, map.address.1)),
