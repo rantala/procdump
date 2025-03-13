@@ -305,32 +305,6 @@ pub(crate) fn lookup_username(uid: u32) -> String {
     "???".to_owned()
 }
 
-pub(crate) fn lookup_groupname(gid: u32) -> String {
-    use libc::{getgrgid_r, group, sysconf, _SC_GETGR_R_SIZE_MAX};
-    use std::ffi::CStr;
-    use std::mem::zeroed;
-
-    let buf_size = match unsafe { sysconf(_SC_GETGR_R_SIZE_MAX) } {
-        x if x <= 0 => {
-            // make some something that we think will be big enough
-            1024
-        }
-        x => x as usize,
-    };
-
-    let mut buf = vec![0; buf_size];
-    let mut pwd: group = unsafe { zeroed() };
-
-    let mut ptr = std::ptr::null_mut::<group>();
-
-    if unsafe { getgrgid_r(gid, &mut pwd, buf.as_mut_ptr(), buf_size, &mut ptr) } == 0 && !ptr.is_null() {
-        let name = unsafe { CStr::from_ptr(pwd.gr_name) };
-        return name.to_string_lossy().into_owned();
-    }
-
-    "???".to_owned()
-}
-
 pub(crate) fn get_locks_for_pid(pid: i32) -> ProcResult<Vec<procfs::Lock>> {
     procfs::locks().map(|locks| {
         locks
