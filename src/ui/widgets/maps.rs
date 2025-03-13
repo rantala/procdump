@@ -106,6 +106,7 @@ impl AppWidget for MapsWidget {
                     Span::styled("Offset     ", header_style),
                     Span::styled("Size       ", header_style),
                     Span::styled("Rss        ", header_style),
+                    Span::styled("Path       ", header_style),
                 ]));
                 for map in &maps.0 {
                     let mut line = vec![
