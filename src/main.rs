@@ -7,12 +7,12 @@ use procfs::process::{self, Process};
 use procfs::WithSystemInfo;
 use ratatui::layout::{Constraint, Direction, Layout, Rect};
 use ratatui::style::*;
-use ratatui::terminal::{Frame, Terminal};
 use ratatui::widgets::*;
 use ratatui::{
     backend::CrosstermBackend,
     text::{Line, Span, Text},
 };
+use ratatui::{Frame, Terminal};
 
 // pub const ERROR_STYLE: Style = Style::default().fg(Color::Red).bg(Color::Reset);
 
@@ -655,7 +655,7 @@ fn main() -> anyhow::Result<()> {
                             ]
                             .as_ref(),
                         )
-                        .split(f.size());
+                        .split(f.area());
 
                     tab_body_height = chunks[3].height;
 

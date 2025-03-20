@@ -2,8 +2,8 @@ use std::time::Duration;
 
 use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::layout::Rect;
-use ratatui::terminal::Frame;
 use ratatui::widgets::*;
+use ratatui::Frame;
 
 pub mod widgets;
 
