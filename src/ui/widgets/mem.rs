@@ -41,61 +41,26 @@ impl AppWidget for MemWidget {
 
         match &self.rollup {
             Ok(rollup) => {
+                let keys = [
+                    "Rss",
+                    "Pss",
+                    "Shared_Clean",
+                    "Shared_Dirty",
+                    "Private_Clean",
+                    "Private_Dirty",
+                    "Referenced",
+                    "Anonymous",
+                    "Swap",
+                ];
                 let key_style = Style::default().fg(Color::Green);
                 let data = &rollup.memory_map_rollup.0[0].extension.map;
-                if let Some(x) = data.get("Rss") {
-                    text.push(Line::from(vec![
-                        Span::styled(format!("{:15}", "Rss:"), key_style),
-                        Span::raw(fmt_bytes(*x, "B")),
-                    ]));
-                }
-                if let Some(x) = data.get("Pss") {
-                    text.push(Line::from(vec![
-                        Span::styled(format!("{:15}", "Pss:"), key_style),
-                        Span::raw(fmt_bytes(*x, "B")),
-                    ]));
-                }
-                if let Some(x) = data.get("Shared_Clean") {
-                    text.push(Line::from(vec![
-                        Span::styled(format!("{:15}", "Shared_Clean:"), key_style),
-                        Span::raw(fmt_bytes(*x, "B")),
-                    ]));
-                }
-                if let Some(x) = data.get("Shared_Dirty") {
-                    text.push(Line::from(vec![
-                        Span::styled(format!("{:15}", "Shared_Dirty:"), key_style),
-                        Span::raw(fmt_bytes(*x, "B")),
-                    ]));
-                }
-                if let Some(x) = data.get("Private_Clean") {
-                    text.push(Line::from(vec![
-                        Span::styled(format!("{:15}", "Private_Clean:"), key_style),
-                        Span::raw(fmt_bytes(*x, "B")),
-                    ]));
-                }
-                if let Some(x) = data.get("Private_Dirty") {
-                    text.push(Line::from(vec![
-                        Span::styled(format!("{:15}", "Private_Dirty:"), key_style),
-                        Span::raw(fmt_bytes(*x, "B")),
-                    ]));
-                }
-                if let Some(x) = data.get("Referenced") {
-                    text.push(Line::from(vec![
-                        Span::styled(format!("{:15}", "Referenced:"), key_style),
-                        Span::raw(fmt_bytes(*x, "B")),
-                    ]));
-                }
-                if let Some(x) = data.get("Anonymous") {
-                    text.push(Line::from(vec![
-                        Span::styled(format!("{:15}", "Anonymous:"), key_style),
-                        Span::raw(fmt_bytes(*x, "B")),
-                    ]));
-                }
-                if let Some(x) = data.get("Swap") {
-                    text.push(Line::from(vec![
-                        Span::styled(format!("{:15}", "Swap:"), key_style),
-                        Span::raw(fmt_bytes(*x, "B")),
-                    ]));
+                for key in keys {
+                    if let Some(x) = data.get(key) {
+                        text.push(Line::from(vec![
+                            Span::styled(format!("{:20}", format!("{key}:")), key_style),
+                            Span::raw(fmt_bytes(*x, "B")),
+                        ]));
+                    }
                 }
             }
             Err(e) => {
