@@ -218,6 +218,7 @@ pub struct App<'a> {
     cgroup_widget: ui::widgets::CGroupWidget,
     io_widget: ui::widgets::IOWidget,
     task_widget: ui::widgets::TaskWidget,
+    dmesg_widget: ui::widgets::DmesgWidget,
     tab: TabState<'a>,
     stat_d: StatDelta<procfs::process::Stat>,
     cpu_spark: SparklineData,
@@ -236,6 +237,7 @@ impl<'a> App<'a> {
             cgroup_widget: ui::widgets::CGroupWidget::new(&proc),
             io_widget: ui::widgets::IOWidget::new(&proc),
             task_widget: ui::widgets::TaskWidget::new(&proc),
+            dmesg_widget: ui::widgets::DmesgWidget::new(&proc),
             tps: procfs::ticks_per_second(),
             stat_d: StatDelta::<procfs::process::Stat>::new(&proc),
             tab: TabState::new(&[
@@ -249,6 +251,7 @@ impl<'a> App<'a> {
                 ui::widgets::CGroupWidget::TITLE,
                 ui::widgets::IOWidget::TITLE,
                 ui::widgets::TaskWidget::TITLE,
+                ui::widgets::DmesgWidget::TITLE,
             ]),
             cpu_spark: SparklineData::new(),
             proc_stat: proc.stat().unwrap(),
@@ -268,6 +271,7 @@ impl<'a> App<'a> {
             self.tree_widget = ui::widgets::TreeWidget::new(&proc);
             self.cgroup_widget = ui::widgets::CGroupWidget::new(&proc);
             self.task_widget = ui::widgets::TaskWidget::new(&proc);
+            self.dmesg_widget = ui::widgets::DmesgWidget::new(&proc);
             self.io_widget = ui::widgets::IOWidget::new(&proc);
             self.stat_d = StatDelta::<procfs::process::Stat>::new(&proc);
             self.cpu_spark = SparklineData::new();
@@ -287,6 +291,7 @@ impl<'a> App<'a> {
             ui::widgets::CGroupWidget::TITLE => self.cgroup_widget.handle_input(input, height),
             ui::widgets::IOWidget::TITLE => self.io_widget.handle_input(input, height),
             ui::widgets::TaskWidget::TITLE => self.task_widget.handle_input(input, height),
+            ui::widgets::DmesgWidget::TITLE => self.dmesg_widget.handle_input(input, height),
             ui::widgets::TreeWidget::TITLE => {
                 if input.code == KeyCode::Enter {
                     let new_pid = self.tree_widget.get_selected_pid();
@@ -326,6 +331,7 @@ impl<'a> App<'a> {
             self.cgroup_widget.update(&self.proc);
             self.io_widget.update(&self.proc);
             self.task_widget.update(&self.proc);
+            self.dmesg_widget.update(&self.proc);
             self.stat_d.update(&self.proc);
 
             let cpu_usage = self.stat_d.cpu_percentage();
@@ -554,6 +560,10 @@ impl<'a> App<'a> {
             ui::widgets::TaskWidget::TITLE => {
                 self.task_widget.draw(f, area, help_text);
                 self.task_widget.draw_scrollbar(f, chunks[1]);
+            }
+            ui::widgets::DmesgWidget::TITLE => {
+                self.dmesg_widget.draw(f, chunks[0], help_text);
+                self.dmesg_widget.draw_scrollbar(f, chunks[1]);
             }
             t => {
                 panic!("Unhandled tab {t}");

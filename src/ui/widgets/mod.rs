@@ -5,6 +5,7 @@ use ratatui::{layout::Rect, text::Text, Frame};
 use super::InputResult;
 
 pub mod cgroup;
+pub mod dmesg;
 pub mod env;
 pub mod files;
 pub mod io;
@@ -16,6 +17,7 @@ pub mod task;
 pub mod tree;
 
 pub use cgroup::*;
+pub use dmesg::*;
 pub use env::*;
 pub use files::*;
 pub use io::*;
