@@ -58,7 +58,7 @@ impl AppWidget for MemWidget {
                     if let Some(x) = data.get(key) {
                         text.push(Line::from(vec![
                             Span::styled(format!("{:20}", format!("{key}:")), key_style),
-                            Span::raw(fmt_bytes(*x, "B")),
+                            Span::raw(format!("{:>10}", fmt_bytes(*x, "B"))),
                         ]));
                     }
                 }
