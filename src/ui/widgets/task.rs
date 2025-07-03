@@ -31,6 +31,7 @@ impl TaskData {
 pub struct TaskWidget {
     last_updated: Instant,
     tasks: ProcResult<IndexMap<i32, TaskData>>,
+    last_tasks_updated: Instant,
     last_tasks: Option<IndexMap<i32, TaskData>>,
     scroll: ScrollController,
 }
@@ -49,6 +50,7 @@ impl TaskWidget {
         TaskWidget {
             last_updated: Instant::now(),
             tasks,
+            last_tasks_updated: Instant::now(),
             last_tasks: None,
             scroll: ScrollController::new(),
         }
@@ -70,19 +72,24 @@ impl AppWidget for TaskWidget {
         let mut text: Vec<Line> = Vec::new();
 
         if let Ok(tasks) = &self.tasks {
+            let tps = procfs::current_system_info().ticks_per_second();
+            let time_delta = self.last_updated - self.last_tasks_updated;
+
             for task in tasks.values() {
                 let name = &task.stat.comm;
 
-                let cpu_str = if let Some(prev) = self.last_tasks.as_ref().and_then(|map| map.get(&task.task.tid)) {
+                let prev = self.last_tasks.as_ref().and_then(|map| map.get(&task.task.tid));
+
+                let cpu_usr = if let Some(prev) = prev {
                     let diff = task.stat.utime - prev.stat.utime;
-                    format!("{:.1}%", diff as f64 / 2.0)
+                    format!("{:.2}%", diff as f64 / tps as f64 / time_delta.as_secs_f64() * 100.0)
                 } else {
-                    "?.?%".to_string()
+                    "?.??%".to_string()
                 };
 
                 text.push(Line::from(Span::raw(format!(
                     "{:<16} {:<7} {:<7} {}",
-                    name, task.task.tid, cpu_str, task.stat.state
+                    name, task.task.tid, cpu_usr, task.stat.state
                 ))));
             }
         } else {
@@ -111,6 +118,7 @@ impl AppWidget for TaskWidget {
             std::mem::swap(&mut new_tasks, &mut self.tasks);
             // "new_tasks" now contains the "old_tasks"
             self.last_tasks = new_tasks.ok();
+            self.last_tasks_updated = self.last_updated;
 
             self.last_updated = Instant::now();
         }
