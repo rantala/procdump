@@ -70,6 +70,10 @@ impl AppWidget for TaskWidget {
         help_text.extend(Text::from(spans));
 
         let mut text: Vec<Line> = Vec::new();
+        text.push(Line::from(Span::raw(format!(
+            "{:<16} {:<7} {:<7} {:<7} {:<7} {:<4} {}",
+            "comm", "tid", "usr%", "sys%", "CPU%", "CPU", "state"
+        ))));
 
         if let Ok(tasks) = &self.tasks {
             let tps = procfs::current_system_info().ticks_per_second();
@@ -87,9 +91,29 @@ impl AppWidget for TaskWidget {
                     "?.??%".to_string()
                 };
 
+                let cpu_sys = if let Some(prev) = prev {
+                    let diff = task.stat.stime - prev.stat.stime;
+                    format!("{:.2}%", diff as f64 / tps as f64 / time_delta.as_secs_f64() * 100.0)
+                } else {
+                    "?.??%".to_string()
+                };
+
+                let cpu_total = if let Some(prev) = prev {
+                    let diff = (task.stat.utime + task.stat.stime) - (prev.stat.utime + prev.stat.stime);
+                    format!("{:.2}%", diff as f64 / tps as f64 / time_delta.as_secs_f64() * 100.0)
+                } else {
+                    "?.??%".to_string()
+                };
+
+                let processor = if let Some(p) = task.stat.processor {
+                    format!("{p}")
+                } else {
+                    "?".to_string()
+                };
+
                 text.push(Line::from(Span::raw(format!(
-                    "{:<16} {:<7} {:<7} {}",
-                    name, task.task.tid, cpu_usr, task.stat.state
+                    "{:<16} {:<7} {:<7} {:<7} {:<7} {:<4} {}",
+                    name, task.task.tid, cpu_usr, cpu_sys, cpu_total, processor, task.stat.state
                 ))));
             }
         } else {
