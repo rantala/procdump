@@ -4,7 +4,7 @@ use std::fmt::Display;
 use std::sync::mpsc;
 use std::thread;
 
-use crossterm::event::{KeyEvent, MouseEvent};
+use crossterm::event::KeyEvent;
 use procfs::{
     process::{all_processes, LimitValue, Process},
     ProcResult,
@@ -225,7 +225,7 @@ pub(crate) fn fmt_rate(b: f32, suffix: &'static str) -> String {
 #[derive(Debug)]
 pub(crate) enum Event {
     Key(KeyEvent),
-    Mouse(MouseEvent),
+    Mouse,
     Tick,
 }
 
@@ -248,7 +248,7 @@ impl Events {
                     if let Err(..) = match evt {
                         Err(..) => return,
                         Ok(Event::Key(e)) => kbd_tx.send(self::Event::Key(e)),
-                        Ok(Event::Mouse(m)) => kbd_tx.send(self::Event::Mouse(m)),
+                        Ok(Event::Mouse(_)) => kbd_tx.send(self::Event::Mouse),
                         _ => continue,
                         /* Ok(Event::Unsupported(bytes)) => match bytes.as_slice() {
                             // manual parsing of cursor movement keys in application mode
